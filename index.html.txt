@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLUIVS - System Portal Gateway</title>
+    <!-- Linking our requirement stylesheet code -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+
+    <!-- Requirement #4: Wrapped Entirely inside a CSS Flexbox Container Structure -->
+    <div class="auth-container">
+        
+        <!-- ==========================================
+             SECTION 1: THE PORTAL LOGIN VIEW LAYOUT CARD
+             ========================================== -->
+        <div class="auth-card" id="login-card">
+            <h2>KLUIVS Login</h2>
+            <p>Koneru Lakshmaiah University Inventory Visualisation System</p>
+            
+            <!-- Requirement #5 & #6: Managed via Custom JavaScript Form Processors -->
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">Account Email Address</label>
+                    <input type="email" id="login-email" placeholder="name@domain.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Security Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-role">Select Module Dashboard Allocation</label>
+                    <select id="login-role" required>
+                        <option value="admin">Admin Module Workspace</option>
+                        <option value="user">Standard User Module View</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">Authenticate & Route</button>
+            </form>
+            
+            <p class="auth-toggle-text">
+                New warehouse operator? <span onclick="toggleAuthForm()">Create an Account</span>
+            </p>
+        </div>
+
+        <!-- ==========================================
+             SECTION 2: THE REGISTRATION SIGNUP ACCORDION FORM
+             ========================================== -->
+        <div class="auth-card" id="signup-card" style="display: none;">
+            <h2>KLUIVS Registration</h2>
+            <p>Provision custom role credentials to LocalStorage</p>
+            
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signup-email">Enter Email Address</label>
+                    <input type="email" id="signup-email" placeholder="example@klu.in" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-password">Create Password</label>
+                    <input type="password" id="signup-password" placeholder="••••••••" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-role">Assign Module Authorisation Level</label>
+                    <select id="signup-role" required>
+                        <option value="admin">Warehouse Administrator (Admin Module)</option>
+                        <option value="user">Logistics Data Clerk (User Module)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">Commit Registration Credentials</button>
+            </form>
+            
+            <p class="auth-toggle-text">
+                Already registered? <span onclick="toggleAuthForm()">Return to Gateway</span>
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Core App Engine Loading -->
+    <script src="app.js"></script>
+</body>
+</html>

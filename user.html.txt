@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLUIVS - User Module Console</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Requirement #4: Configured using a dual-column CSS Grid Master Layout -->
+    <div class="dashboard-container">
+        
+        <!-- ==========================================
+             LEFT COMPONENT SIDEBAR NAVIGATION 
+             ========================================== -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>KLUIVS</h2>
+                <p style="font-size: 11px; text-align: center; color: #64748b;">CLERK VIEWPORT</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active">🔍 Browse Inventory</li>
+                <li>📦 Track Shipments</li>
+            </ul>
+            <button onclick="logOut()" class="btn btn-logout">Secure Terminal Logout</button>
+        </aside>
+
+        <!-- ==========================================
+             RIGHT COMPONENT MAIN DATA CONTENT LAYER
+             ========================================== -->
+        <main class="main-content">
+            <header class="header-bar">
+                <div>
+                    <h1 id="welcome-text">Operator Tracking Console</h1>
+                    <p style="color: #64748b; font-size: 14px;">Stock Read-Only Viewport Framework</p>
+                </div>
+                <div style="font-weight: 600; color: #2563eb;" id="session-user-badge">Role: Standard Operator</div>
+            </header>
+
+            <!-- Metrics Overview Cards -->
+            <div class="stats-row">
+                <div class="card">
+                    <h3 style="color: #64748b; font-size: 14px; text-transform: uppercase;">Total Monitored Skus</h3>
+                    <p id="total-skus" style="font-size: 28px; font-weight: 700; color: #0f172a; margin-top: 8px;">0</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: #64748b; font-size: 14px; text-transform: uppercase;">Warehouse Health Status</h3>
+                    <p style="font-size: 24px; font-weight: 700; color: #22c55e; margin-top: 12px;">ONLINE</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Search Filter Module -->
+            <section class="table-container" style="margin-bottom: 20px; padding: 15px 24px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="search-input" style="font-weight: 600; margin-bottom: 4px;">Quick-Filter Stock Catalog</label>
+                    <input type="text" id="search-input" placeholder="Type to filter by product description description..." oninput="renderUserInventory()">
+                </div>
+            </section>
+
+            <!-- Read-Only Inventory Tracker Data Grid Grid Layout -->
+            <section class="table-container">
+                <h2 style="color: #1e293b; margin-bottom: 15px;">Live Stock Ledger</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item ID</th>
+                            <th>Product Description Name</th>
+                            <th>Current Inventory Count</th>
+                            <th>Pipeline Supplier Connection</th>
+                            <th>System Operational Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-rows">
+                        <!-- Instantiated Dynamically via app.js -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Core App Shared Engine Loading -->
+    <script src="app.js"></script>
+    <script>
+        // Restrict page entry if not logged in
+        const activeSession = JSON.parse(localStorage.getItem('currentUser'));
+        if (!activeSession) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('welcome-text').innerText = `Welcome, Operator Terminal Console`;
+        }
+
+        // Render User Inventory with Search Filtering Capability
+        function renderUserInventory() {
+            const dataList = JSON.parse(localStorage.getItem('inventory')) || [];
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            const container = document.getElementById('inventory-rows');
+            container.innerHTML = '';
+            
+            let matchedItems = 0;
+
+            dataList.forEach((product) => {
+                // Filter matches by name
+                if (!product.name.toLowerCase().includes(searchQuery)) return;
+                
+                matchedItems++;
+                const isUnderThreshold = Number(product.stock) < Number(product.minStock);
+
+                const displayRow = document.createElement('tr');
+                if (isUnderThreshold) displayRow.classList.add('low-stock-row');
+
+                displayRow.innerHTML = `
+                    <td><code>${product.id}</code></td>
+                    <td><strong>${product.name}</strong></td>
+                    <td>${product.stock} units</td>
+                    <td>${product.supplier}</td>
+                    <td>
+                        ${isUnderThreshold ? '<span class="badge-low">⚠️ REORDER NEEDED</span>' : '<span class="badge-ok">✓ AVAILABLE</span>'}
+                    </td>
+                `;
+                container.appendChild(displayRow);
+            });
+
+            document.getElementById('total-skus').innerText = matchedItems;
+        }
+
+        // Run rendering sequence on document ready execution path
+        window.onload = renderUserInventory;
+    </script>
+</body>
+</html>
