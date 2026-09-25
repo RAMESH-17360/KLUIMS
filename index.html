@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KLUIVS - System Portal Gateway</title>
-    <!-- Linking our requirement stylesheet code -->
+    <title>KLUIMS - System Portal Gateway</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="auth-page">
 
-    <!-- Requirement #4: Wrapped Entirely inside a CSS Flexbox Container Structure -->
     <div class="auth-container">
         
-        <!-- ==========================================
-             SECTION 1: THE PORTAL LOGIN VIEW LAYOUT CARD
-             ========================================== -->
+        <!-- LOGIN CARD COMPONENT -->
         <div class="auth-card" id="login-card">
-            <h2>KLUIVS Login</h2>
+            <h2>KLUIMS Login</h2>
             <p>Koneru Lakshmaiah University Inventory Visualisation System</p>
             
-            <!-- Requirement #5 & #6: Managed via Custom JavaScript Form Processors -->
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label for="login-email">Account Email Address</label>
@@ -47,11 +42,9 @@
             </p>
         </div>
 
-        <!-- ==========================================
-             SECTION 2: THE REGISTRATION SIGNUP ACCORDION FORM
-             ========================================== -->
+        <!-- REGISTRATION SIGNUP CARD COMPONENT -->
         <div class="auth-card" id="signup-card" style="display: none;">
-            <h2>KLUIVS Registration</h2>
+            <h2>KLUIMS Registration</h2>
             <p>Provision custom role credentials to LocalStorage</p>
             
             <form onsubmit="handleSignup(event)">
@@ -83,7 +76,61 @@
 
     </div>
 
-    <!-- Core App Engine Loading -->
-    <script src="app.js"></script>
+    <!-- INTERNALIZED JAVASCRIPT ENGINE EMBED - REMOVES ALL COMPILING AND PATH ERRORS -->
+    <script>
+        // Seed default database parameters dynamically upon viewport initialization
+        if (!localStorage.getItem('inventory')) {
+            const defaultInventory = [
+                { id: "P001", name: "Laptop Batteries", stock: 12, supplier: "Apex Power Ltd", minStock: 15 },
+                { id: "P002", name: "Type-C HDMI Hubs", stock: 45, supplier: "LogiTech Logistics", minStock: 10 },
+                { id: "P003", name: "Mechanical Keyboards", stock: 4, supplier: "Clicky Switches Corp", minStock: 8 }
+            ];
+            localStorage.setItem('inventory', JSON.stringify(defaultInventory));
+        }
+
+        // Toggles views instantly within the single page architecture wrapper
+        function toggleAuthForm() {
+            const loginCard = document.getElementById('login-card');
+            const signupCard = document.getElementById('signup-card');
+            
+            if (loginCard.style.display === 'none') {
+                loginCard.style.display = 'block';
+                signupCard.style.display = 'none';
+            } else {
+                loginCard.style.display = 'none';
+                signupCard.style.display = 'block';
+            }
+        }
+
+        // Fulfills Requirement #5: Commits login details asynchronously to client storage
+        function handleSignup(event) {
+            event.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const role = document.getElementById('signup-role').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push({ email, password, role });
+            
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Signup successful! Switching to Login view.');
+            toggleAuthForm();
+        }
+
+        // Fulfills Requirement #6: Core Navigation Router Redirection Routine
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const role = document.getElementById('login-role').value;
+
+            localStorage.setItem('currentUser', JSON.stringify({ email: email, role: role }));
+
+            if (role === 'admin') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'user.html';
+            }
+        }
+    </script>
 </body>
 </html>
